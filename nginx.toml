@@ -1,0 +1,18 @@
+[template]
+# Name of the template used to render the application's config
+src = "nginx.tmpl"
+
+# Destination for rendered config file
+dest = "/etc/nginx/sites-enabled/app.conf"
+
+# File ownership and mode information
+owner = "root"
+mode = "0644"
+
+# Commands used to check validity of the config and reload the service
+# when a new config is in place.
+check_cmd = "/usr/sbin/nginx -t"
+reload_cmd = "/usr/sbin/service nginx reload"
+
+# The keys to watch will be filled out when the Docker container is built
+# see the Dockerfile
