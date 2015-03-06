@@ -23,10 +23,10 @@ server {
     server_name _;
 
     {{range $dir := lsdir (getenv "confdKey")}}
-    location /{{base $dir}}/ {
+    location ^~ /{{base $dir}}/ {
         proxy_pass http://{{base $dir}}_pool/;
         proxy_redirect default;
-        proxy_set_header Host $host/{{base $dir}};
+        proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
