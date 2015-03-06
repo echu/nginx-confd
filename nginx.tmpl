@@ -3,7 +3,7 @@
 {{range $dir := lsdir (getenv "confdKey")}}
 upstream {{base $dir}}_pool {
     {{$appdir := printf "%s/%s/*" (getenv "confdKey") $dir}}
-    {{range getvs $custdir}}
+    {{range getvs $appdir}}
     server {{.}};
     {{end}}
 }
