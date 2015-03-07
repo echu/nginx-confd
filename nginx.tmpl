@@ -7,6 +7,27 @@ upstream {{base $dir}}_pool {
     server {{.}};
     {{end}}
 }
+
+server {
+    listen 80;
+    listen [::]:80 ipv6only=on;
+
+    access_log /var/log/nginx/access.log combined;
+
+    root /var/www/html;
+
+    # Add index.php to the list if you are using PHP
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name {{base $dir}}.{{getenv "COREOS_PUBLIC_IPV4"}}.xip.io;
+
+    location / {
+        proxy_pass http://{{base $dir}}_pool;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
 {{end}}
 
 server {
@@ -17,19 +38,7 @@ server {
 
     root /var/www/html;
 
-    # Add index.php to the list if you are using PHP
-    index index.html index.htm index.nginx-debian.html;
+    index index.html index.html index.nginx-debian.html;
 
     server_name _;
-
-    {{range $dir := lsdir (getenv "confdKey")}}
-    location /{{base $dir}}/ {
-        proxy_pass http://{{base $dir}}_pool/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Script-Name /{{base $dir}};
-    }
-
-    {{end}}
 }
